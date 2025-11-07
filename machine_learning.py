@@ -13,11 +13,27 @@ print(data.head())
 # Calculate moving averages
 data['MA_10'] = data['Close'].rolling(window=10).mean()
 data['MA_50'] = data['Close'].rolling(window=50).mean()
+# Volume
+if 'Volume' in data.columns:
+    data['Volume'] = data['Volume']
+# Volatility (rolling std dev)
+data['Volatility_10'] = data['Close'].rolling(window=10).std()
+# RSI (Relative Strength Index)
+delta = data['Close'].diff()
+gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+rs = gain / loss
+data['RSI_14'] = 100 - (100 / (1 + rs))
+# MACD (Moving Average Convergence Divergence)
+ema12 = data['Close'].ewm(span=12, adjust=False).mean()
+ema26 = data['Close'].ewm(span=26, adjust=False).mean()
+data['MACD'] = ema12 - ema26
 # Drop NaN values
 data = data.dropna()
 # Define features and target
 
-X = data[['Close', 'MA_10', 'MA_50']]
+feature_cols = ['Close', 'MA_10', 'MA_50', 'Volume', 'Volatility_10', 'RSI_14', 'MACD']
+X = data[[col for col in feature_cols if col in data.columns]]
 y = data['Close'].shift(-1).dropna()
 X = X[:-1]
 # Split data into training and testing sets

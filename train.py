@@ -18,13 +18,29 @@ def save_data(temp_data, ticker):
 def calculate_moving_avg(data):
     # Calculate moving averages
     data['MA_10'] = data['Close'].rolling(window=10).mean()
-    data['MA_50'] = data['Close'].rolling(window=50).mean()    
+    data['MA_50'] = data['Close'].rolling(window=50).mean()
+    # Volume
+    if 'Volume' in data.columns:
+        data['Volume'] = data['Volume']
+    # Volatility (rolling std dev)
+    data['Volatility_10'] = data['Close'].rolling(window=10).std()
+    # RSI (Relative Strength Index)
+    delta = data['Close'].diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+    rs = gain / loss
+    data['RSI_14'] = 100 - (100 / (1 + rs))
+    # MACD (Moving Average Convergence Divergence)
+    ema12 = data['Close'].ewm(span=12, adjust=False).mean()
+    ema26 = data['Close'].ewm(span=26, adjust=False).mean()
+    data['MACD'] = ema12 - ema26
     # Drop NaN values
     return data.dropna()
 
 def get_train_test_data(data):
     # Define features and target
-    X = data[['Close', 'MA_10', 'MA_50']]
+    feature_cols = ['Close', 'MA_10', 'MA_50', 'Volume', 'Volatility_10', 'RSI_14', 'MACD']
+    X = data[[col for col in feature_cols if col in data.columns]]
     y = data['Close'].shift(-1).dropna()
     X = X[:-1]
     # Split data into training and testing sets
@@ -59,7 +75,11 @@ def plot_graph(y_test,predictions):
 
 def save_model(model,filename):
     import joblib
-    joblib.dump(model, filename)
+    import os
+    models_dir = os.path.join(os.path.dirname(__file__), 'models')
+    os.makedirs(models_dir, exist_ok=True)
+    filepath = os.path.join(models_dir, filename)
+    joblib.dump(model, filepath)
 
 if __name__ == "__main__":
     ticker = '^NSEI'

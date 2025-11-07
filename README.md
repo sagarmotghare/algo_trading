@@ -35,3 +35,13 @@ algo_trading/
 
 ## 🛠️ Notes
 - Ensure internet connectivity for live data access.
+
+## 🧪 Sample Data
+Sample data file `Old Data.xlsx` is provided for testing and development. You can use it to run training and live prediction scripts without downloading new data.
+
+## 🧑‍💻 Usage Example
+To run a basic test of model training logic:
+```bash
+python -m unittest tests/test_train.py
+```
+This will validate that the training pipeline works as expected with sample data.
