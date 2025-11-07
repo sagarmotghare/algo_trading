@@ -3,7 +3,7 @@ An algorithmic trading system designed to train predictive models and operate on
 ## 🚀 Getting Started
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/algo_trading.git
+git clone https://github.com/sagarmotghare/algo_trading.git
 cd algo_trading
 ```
 ## 2. Install Dependencies
@@ -23,7 +23,6 @@ Once the model is trained, start live data processing:
 ```bash
 python live.py
 ```
-
 This script uses the trained model to make predictions based on real-time market data.
 ## 📁 Project Structure
 ```bash
