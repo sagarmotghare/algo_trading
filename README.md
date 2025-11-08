@@ -17,7 +17,7 @@ Before running live predictions, train the model using historical data:
 ```bash
 python train.py
 ```
-This will generate a serialized model file named ```^NSEI.pkl```.
+This will generate a serialized model file named `^NSEI.pkl`.
 ## 📡 Live Trading
 Once the model is trained, start live data processing:
 ```bash
@@ -27,11 +27,25 @@ This script uses the trained model to make predictions based on real-time market
 ## 📁 Project Structure
 ```bash
 algo_trading/
+├── ^NSEI.pkl        # Generated model file after training
 ├── train.py         # Model training script
 ├── live.py          # Live data processing and prediction
 ├── requirements.txt # Python dependencies
-└── ^NSEI.pkl        # Generated model file after training
+├── start.bat        # Launch script with PID tracking
+└── stop.bat         # Terminates the running Python process
+└── schedule.bat     # Registers daily start/stop tasks via Task Scheduler
 ```
+## 🖥️ Batch Scripts
+- start.bat: Launches the trading system, activates the virtual environment (if present), starts `live.py`, and saves the Python process ID to `pid.txt`.
+- stop.bat: Reads the PID from `pid.txt` and terminates the corresponding Python process.
+- schedule.bat: Self-elevates to Administrator and registers two scheduled tasks using Windows Task Scheduler:
+    - Runs `start.bat` daily at 9:10 AM
+    - Runs `stop.bat` daily at 3:35 PM
+
+To apply the schedule, simply double-click `schedule.bat`. It will request elevation automatically if needed.
+
 
 ## 🛠️ Notes
 - Ensure internet connectivity for live data access.
+- Use `start.bat` to launch the system and `stop.bat` to terminate it cleanly.
+- Logs are saved to `log.txt` if redirected in `live.py`.
