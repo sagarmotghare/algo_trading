@@ -35,14 +35,19 @@ algo_trading/
 └── stop.bat         # Terminates the running Python process
 └── schedule.bat     # Registers daily start/stop tasks via Task Scheduler
 ```
-## 🖥️ Batch Scripts
-- start.bat: Launches the trading system, activates the virtual environment (if present), starts `live.py`, and saves the Python process ID to `pid.txt`.
-- stop.bat: Reads the PID from `pid.txt` and terminates the corresponding Python process.
-- schedule.bat: Self-elevates to Administrator and registers two scheduled tasks using Windows Task Scheduler:
-    - Runs `start.bat` daily at 9:10 AM
-    - Runs `stop.bat` daily at 3:35 PM
+🖥️ Batch Scripts
+- main.bat: Central controller script supporting multiple flags:
+    - `--start`: Activates the virtual environment (if present), launches `live.py`, and saves the Python process ID to `pid.txt`.
+    - `--stop`: Reads the PID from `pid.txt` and terminates the corresponding Python process.
+    - `--schedule`: Self-elevates to Administrator and registers two scheduled tasks using Windows Task Scheduler:
+        - Runs `main.bat --start` daily at 9:10 AM
+        - Runs `main.bat --stop` daily at 3:35 PM
+    - --shortcut: Creates three desktop shortcuts:
+        - StartAlgoTrading.lnk → runs `main.bat --start`
+        - StopAlgoTrading.lnk → runs `main.bat --stop`
+        - ScheduleAlgoTrading.lnk → runs `main.bat --schedule`
 
-To apply the schedule, simply double-click `schedule.bat`. It will request elevation automatically if needed.
+💡 To apply the schedule, run `main.bat --schedule`. It will request elevation automatically if needed.
 
 
 ## 🛠️ Notes
