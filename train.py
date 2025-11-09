@@ -1,4 +1,5 @@
 # !pip install yfinance pandas scikit-learn matplotlib
+import numpy as np
 
 def download_data(ticker):
     import yfinance as yf
@@ -15,16 +16,39 @@ def save_data(temp_data, ticker):
     temp_data.index = temp_data.index.tz_localize(None)
     temp_data.to_excel(file_name)
 
-def calculate_moving_avg(data):
-    # Calculate moving averages
+def calculate_parameters(data):
+    # Calculate moving averages    
     data['MA_10'] = data['Close'].rolling(window=10).mean()
-    data['MA_50'] = data['Close'].rolling(window=50).mean()    
+    data['MA_50'] = data['Close'].rolling(window=50).mean()
+    data['Volatility_10'] = data['Close'].rolling(window=10).std()
+    
+    # RSI_14
+    delta = data['Close'].diff()
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
+
+    avg_gain = gain.rolling(window=14).mean()
+    avg_loss = loss.rolling(window=14).mean()
+
+    rs = avg_gain / avg_loss
+    data['RSI_14'] = 100 - (100 / (1 + rs))
+
+    # EMA
+    ema_12 = data['Close'].ewm(span=12, adjust=False).mean()
+    ema_26 = data['Close'].ewm(span=26, adjust=False).mean()
+
+    data['MACD'] = ema_12 - ema_26
+    data['Signal'] = data['MACD'].ewm(span=9, adjust=False).mean()
+    data['Histogram'] = data['MACD'] - data['Signal']
+
+    # Time Diff    
+    data["Time_Diff"] = data.index.diff() / np.timedelta64(1, 's')
     # Drop NaN values
     return data.dropna()
 
 def get_train_test_data(data):
     # Define features and target
-    X = data[['Close', 'MA_10', 'MA_50']]
+    X = data
     y = data['Close'].shift(-1).dropna()
     X = X[:-1]
     # Split data into training and testing sets
@@ -44,6 +68,7 @@ def train_model(X_train, X_test, y_train, y_test):
     r2 = r2_score(y_test, predictions)
     print(f'Mean Squared Error: {mse}')
     print(f'R² Score: {r2}')
+    print(model)
     return model, predictions
 
 def plot_graph(y_test,predictions):
@@ -65,13 +90,12 @@ if __name__ == "__main__":
     ticker = '^NSEI'
     data = download_data(ticker)
 
-    save_data(data, ticker)
+    # save_data(data, ticker)
 
-    data = calculate_moving_avg(data)
-
+    data = calculate_parameters(data)
+    
     X_train, X_test, y_train, y_test = get_train_test_data(data)
     model, predictions =  train_model(X_train, X_test, y_train, y_test)
-
-    # plot_graph(y_test, predictions)    
-
+    
+    # plot_graph(y_test, predictions)        
     save_model(model, ticker+".pkl")
