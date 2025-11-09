@@ -1,3 +1,4 @@
 *.xlsx
 *.log
 __pycache__/**.pyc
+*.lnk
