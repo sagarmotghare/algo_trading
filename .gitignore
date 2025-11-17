@@ -2,3 +2,27 @@
 *.log
 __pycache__/**.pyc
 *.lnk
+Market Data/INDIA VIX_minute.csv
+Market Data/NIFTY 50_minute.csv
+Market Data/NIFTY 100_minute.csv
+Market Data/NIFTY 200_minute.csv
+Market Data/NIFTY 500_minute.csv
+Market Data/NIFTY ALPHA 50_minute.csv
+Market Data/NIFTY AUTO_minute.csv
+Market Data/NIFTY BANK_minute.csv
+Market Data/NIFTY COMMODITIES_minute.csv
+Market Data/NIFTY CONSR DURBL_minute.csv
+Market Data/NIFTY CONSUMPTION_minute.csv
+Market Data/NIFTY CPSE_minute.csv
+Market Data/NIFTY ENERGY_minute.csv
+Market Data/NIFTY FIN SERVICE_minute.csv
+Market Data/NIFTY FMCG_minute.csv
+Market Data/NIFTY GS COMPSITE_minute.csv
+Market Data/NIFTY HEALTHCARE_minute.csv
+Market Data/NIFTY IND DIGITAL_minute.csv
+Market Data/NIFTY INDIA MFG_minute.csv
+Market Data/NIFTY INFRA_minute.csv
+Market Data/NIFTY IT_minute.csv
+Market Data/NIFTY LARGEMID250_minute.csv
+Market Data.zip
+pid.txt
