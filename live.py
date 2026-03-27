@@ -72,20 +72,20 @@ def message_handler(message):
         logger.info(f"Selling {position} shares at {current_price:.2f}")
         position = 0
 
-# # live
-# with yf.WebSocket() as ws:
-#     ws.subscribe(["^NSEI"])
-#     ws.listen(message_handler)
+# live
+with yf.WebSocket() as ws:
+    ws.subscribe(["^NSEI"])
+    ws.listen(message_handler)
 
-# backtest
-import yfinance as yf
-yf_data = yf.download("^NSEI", period="2d",interval="1m")
-yf_data.index = yf_data.index.tz_convert("Asia/Kolkata")    
-yf_data = yf_data.droplevel(level=1, axis=1)
-d = calculate_parameters(yf_data)
+# # backtest
+# import yfinance as yf
+# yf_data = yf.download("^NSEI", period="2d",interval="1m")
+# yf_data.index = yf_data.index.tz_convert("Asia/Kolkata")    
+# yf_data = yf_data.droplevel(level=1, axis=1)
+# d = calculate_parameters(yf_data)
 
-for index ,row in d.iterrows():
-    message_handler({"price": row["Close"], "time": pd.Timestamp(index, unit='s').value // 10**6})
+# for index ,row in d.iterrows():
+#     message_handler({"price": row["Close"], "time": pd.Timestamp(index, unit='s').value // 10**6})
 
 final_balance = balance + (position * old_data.iloc[-1]['Close'])
 profit = final_balance - initial_balance
