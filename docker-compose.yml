@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  fetch_data:
+    build:
+      context: .
+      dockerfile: Dockerfile.fetch_data
+    command: python main.py
+    environment:
+      - TICKER=^NSEI
+    volumes:
+      - ./data:/fetch_data/data
+    restart: on-failure
+    
+  lightpanda:
+      image: lightpanda/browser:nightly
+      restart: unless-stopped
+      ports:
+          - '9222:9222'
