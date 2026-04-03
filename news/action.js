@@ -5,7 +5,7 @@ import { DatabaseSync } from 'node:sqlite';
 
 async function action() {
     const posts = await collectPosts()
-    const database = new DatabaseSync('./news.db');
+    const database = new DatabaseSync('news.db');
 
     database.exec(`
         CREATE TABLE IF NOT EXISTS news(

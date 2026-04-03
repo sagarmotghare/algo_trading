@@ -19,13 +19,13 @@ export async function collectPosts() {
     // Get All Today's post
     const liveBlogPosting = await page.evaluate(() => {
         let all_scripts = Array.from(document.querySelectorAll("script[type='application/ld+json']").values())
-        console.log("all_scripts", all_scripts)
         for (let script of all_scripts) {
             const script_content = JSON.parse(script.textContent)
             if (script_content["@type"] == "LiveBlogPosting")
                 return script_content
         }
     });
+    
     await stop()
     
     return liveBlogPosting

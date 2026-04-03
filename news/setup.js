@@ -2,33 +2,44 @@
 
 import puppeteer from 'puppeteer-core';
 
-const lpdopts = {
-    host: '127.0.0.1',
-    port: 9222,
-};
+// const lpdopts = {
+//     host: 'localhost',
+//     port: 9222,
+// };
 
-const puppeteeropts = {
-    browserWSEndpoint: 'ws://' + lpdopts.host + ':' + lpdopts.port,
-};
+// const puppeteeropts = {
+//     browserWSEndpoint: `ws://${lpdopts.host}:${lpdopts.port}`
+// };
 
 let browser, context, page;
 
 export async function init() {
-    browser = await puppeteer.launch({
-        executablePath: "C:\\Users\\sagar\\AppData\\Local\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
-        headless: false,
-        devtools: true
-    });
+    try {
+        // browser = await puppeteer.connect(puppeteeropts)
+        browser = await puppeteer.launch({
+            executablePath: "C:\\Users\\sagar\\AppData\\Local\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
+            headless: false
+        })
 
-    // Use incognito context if you want isolation
-    context = await browser.createBrowserContext();
-    page = await context.newPage();
+        // Use incognito context if you want isolation
+        context = await browser.createBrowserContext();
+        page = await browser.newPage();
 
-    return { browser, context, page };
+        return { browser, context, page };
+    } catch (error) {
+        console.error(error)
+    }
+
 }
 
 export async function stop() {
-    await page.close();
-    await context.close();
-    await browser.close();
+    if (page && !page.isClosed()) {
+        await page.close();
+    }
+    if (context) {
+        await context.close();
+    }
+    if (browser) {
+        await browser.disconnect(); // safer than close() when using connect()
+    }
 }
