@@ -1,5 +1,5 @@
 .env
-.ven/
+.venv/
 node_modules/
 data/
 *.db
