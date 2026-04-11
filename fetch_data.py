@@ -17,7 +17,7 @@ Environment Variables:
 - TICKER: The stock or index symbol to subscribe to (e.g., ^NSEI)
 
 Database:
-- Location: ./data/market.db
+- Location: ./data/market2.db
 - Schema: Defined in sql/messages_create.sql
 - Insert Logic: Defined in sql/messages_insert.sql
 
@@ -44,10 +44,10 @@ import datetime
 import sys
 
 # Retrieve ticker symbol from environment variable
-ticker = os.environ['TICKER'] 
+ticker = "^NSEI"
 
 # Connect to SQLite database (creates file if it does not exist)
-conn = sqlite3.connect('./data/market.db')
+conn = sqlite3.connect('./data/market2.db')
 cursor = conn.cursor()
 
 def messages_create_table():
