@@ -47,7 +47,7 @@ import sys
 ticker = "^NSEI"
 
 # Connect to SQLite database (creates file if it does not exist)
-conn = sqlite3.connect('./data/market2.db')
+conn = sqlite3.connect('./data/market3.db')
 cursor = conn.cursor()
 
 def messages_create_table():
