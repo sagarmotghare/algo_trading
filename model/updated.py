@@ -117,26 +117,32 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 # Training Function
 # =========================
 import torch.optim as optim
+from tqdm import tqdm
 
 def train_model(model, train_loader, epochs=10):
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    for epoch in range(epochs):
-        model.train()
-        epoch_loss = 0.0
-        for batch_X, batch_y in train_loader:
-            outputs = model(batch_X)
-            loss = criterion(outputs, batch_y)
+    
+    with tqdm(total=epochs, desc=model.__class__.__name__) as pbar:
+        for epoch in range(epochs):
+            model.train()
+            epoch_loss = 0.0
+        
+            for batch_X, batch_y in train_loader:
+                outputs = model(batch_X)
+                loss = criterion(outputs, batch_y)
 
-            optimizer.zero_grad()
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-            optimizer.step()
+                optimizer.zero_grad()
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+                optimizer.step()
 
-            epoch_loss += loss.item()
-        print(f"{model.__class__.__name__} Epoch {epoch+1}/{epochs}, Loss: {epoch_loss/len(train_loader):.10f}")
+                epoch_loss += loss.item()
+        
+            pbar.update(epoch+1)
+            pbar.set_postfix({"Loss": epoch_loss/len(train_loader)})        
+    
     return model, criterion
-
 # =========================
 # Evaluation Function
 # =========================
