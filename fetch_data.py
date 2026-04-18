@@ -43,11 +43,14 @@ import asyncio
 import datetime
 import sys
 
+from dotenv import dotenv_values
+
+config = dotenv_values(".env")
 # Retrieve ticker symbol from environment variable
-ticker = "^NSEI"
+ticker = config["TICKER"]
 
 # Connect to SQLite database (creates file if it does not exist)
-conn = sqlite3.connect('./data/market3.db')
+conn = sqlite3.connect(config["DB_PATH"])
 cursor = conn.cursor()
 
 def messages_create_table():
