@@ -1,13 +1,18 @@
 # =========================
 # Getting Data
 # =========================
+import glob
+
+db_files = glob.glob("*.db")
+
 import sqlite3
 import pandas as pd
 
-with sqlite3.connect("market.db") as conn:
-    df = pd.read_sql_query('SELECT * FROM messages', conn)
+df = pd.DataFrame()
 
-print("From", df.iloc[0]['timestamp'], "Till", df.iloc[-1]['timestamp'])
+for file in db_files:
+  with sqlite3.connect(file) as conn:
+      df = pd.concat([df, pd.read_sql_query('SELECT * FROM messages', conn)])
 
 # =========================
 # Preparing Data
@@ -17,6 +22,26 @@ import ast
 data = pd.json_normalize(df["data"].apply(lambda x: ast.literal_eval(x)))
 data.time = pd.to_datetime(data.time, unit="ms")
 data.drop_duplicates(inplace=True)
+
+# =========================
+# Adding Strategies
+# =========================
+
+sma_periods = [5, 9, 20, 50, 130]
+sma_column_prefix = "SMA_"
+
+for sma in sma_periods:
+  data[f"{sma_column_prefix}{sma}"] = data.price.rolling(window=sma).mean()
+
+ema_periods = [9, 20, 50, 200]
+ema_column_prefix = "EMA_"
+
+for ema in ema_periods:
+  data[f"{ema_column_prefix}{ema}"] = data.price.ewm(span=ema, adjust=False).mean()
+
+trend_strategy = [f"{sma_column_prefix}{sma}" for sma in sma_periods ] + [f"{ema_column_prefix}{ema}" for ema in ema_periods ]
+
+data.dropna(subset=trend_strategy, inplace=True)
 
 X = data["price"].iloc[:-1].values.reshape(-1,1)
 y = data["price"].shift(-1).iloc[:-1].values.reshape(-1, 1)
@@ -238,8 +263,8 @@ import matplotlib.pyplot as plt
 
 import matplotlib.pyplot as plt
 
-rows = 3
-cols = 3
+rows = 5
+cols = 5
 
 total_graph = rows * cols
 fig, axs = plt.subplots(rows, cols, figsize=(12,10))
