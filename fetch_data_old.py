@@ -41,21 +41,16 @@ import yfinance as yf
 import asyncio
 import datetime
 import sys
+import ast
 
 from dotenv import dotenv_values
-import csv
 
 config = dotenv_values(".env")
 # Retrieve ticker symbol from environment variable
-# ticker = config["TICKER"] if isinstance(config["TICKER"], list) else [config["TICKER"]]
-ticker = []
-with open(f"nifty_indexes.csv", newline="") as file:
-    reader = csv.DictReader(file)
-    for row in reader:
-        ticker.append(row["Symbol"])
+ticker = ast.literal_eval( config["TICKER"])
 
 # Connect to SQLite database (creates file if it does not exist)
-conn = sqlite3.connect("MultipleNifty.db")
+conn = sqlite3.connect(config["DB_PATH"])
 cursor = conn.cursor()
 
 def messages_create_table():

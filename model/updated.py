@@ -1,17 +1,15 @@
 # =========================
 # Getting Data
 # =========================
-import glob
-
-db_files = glob.glob("*.db")
-
 import sqlite3
 import pandas as pd
+import glob
 
 df = pd.DataFrame()
 
-for file in db_files:
+for file in glob.glob("*.db"):
   with sqlite3.connect(file) as conn:
+      print(file)
       df = pd.concat([df, pd.read_sql_query('SELECT * FROM messages', conn)])
 
 # =========================
@@ -20,8 +18,16 @@ for file in db_files:
 import ast
 
 data = pd.json_normalize(df["data"].apply(lambda x: ast.literal_eval(x)))
-data.time = pd.to_datetime(data.time, unit="ms")
-data.drop_duplicates(inplace=True)
+data.time = pd.to_datetime(pd.to_numeric(data.time), unit="ms")
+data = data.drop_duplicates().sort_values(by="time")
+
+# =========================
+# Convert data to CSV
+# =========================
+df_group = {date: group for date, group in data.groupby(data["time"].dt.date)}
+
+for date, group in df_group.items():
+  group.to_csv(f"{date}.csv")
 
 # =========================
 # Adding Strategies
