@@ -1,2 +1,2 @@
 .\.venv\Scripts\Activate.ps1
-python .\fetch_data_old.py
+python .\fetch_data.py
